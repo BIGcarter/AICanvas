@@ -1,0 +1,348 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Claude-inspired color scheme - Light mode */
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --card-foreground: 15 23 42;
+  --popover: 255 255 255;
+  --popover-foreground: 15 23 42;
+  --primary: 15 118 110;
+  --primary-foreground: 255 255 255;
+  --secondary: 241 245 249;
+  --secondary-foreground: 15 23 42;
+  --muted: 248 250 252;
+  --muted-foreground: 100 116 139;
+  --accent: 241 245 249;
+  --accent-foreground: 15 23 42;
+  --destructive: 239 68 68;
+  --destructive-foreground: 255 255 255;
+  --border: 226 232 240;
+  --input: 226 232 240;
+  --ring: 15 118 110;
+  
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode colors */
+    --background: 2 6 23;
+    --foreground: 248 250 252;
+    --card: 15 23 42;
+    --card-foreground: 248 250 252;
+    --popover: 15 23 42;
+    --popover-foreground: 248 250 252;
+    --primary: 34 197 94;
+    --primary-foreground: 2 6 23;
+    --secondary: 30 41 59;
+    --secondary-foreground: 248 250 252;
+    --muted: 30 41 59;
+    --muted-foreground: 148 163 184;
+    --accent: 30 41 59;
+    --accent-foreground: 248 250 252;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 51 65 85;
+    --input: 51 65 85;
+    --ring: 34 197 94;
+  }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  font-family: var(--font-inter);
+  font-feature-settings: 'cv11', 'ss01';
+  font-variation-settings: 'opsz' 32;
+}
+
+/* Canvas-specific styles */
+.canvas-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #fafafa;
+  background-image: 
+    linear-gradient(#e5e7eb 1px, transparent 1px),
+    linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+  background-size: 20px 20px;
+  cursor: grab;
+}
+
+.canvas-root:active {
+  cursor: grabbing;
+}
+
+/* Node styles */
+.node {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.node:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.node.selected {
+  box-shadow: 0 0 0 2px #3b82f6, 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.node-text {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 12px 16px;
+  min-width: 120px;
+  min-height: 40px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.node-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  width: 280px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.node-card-header {
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.node-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.node-card-body {
+  padding: 8px 16px 16px 16px;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.node-image {
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.node-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Selection box */
+.selection-box {
+  position: absolute;
+  border: 2px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Transform handles */
+.transform-handles {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.transform-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border: 2px solid white;
+  border-radius: 50%;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.transform-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }
+.transform-handle.ne { top: -4px; right: -4px; cursor: ne-resize; }
+.transform-handle.sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+.transform-handle.se { bottom: -4px; right: -4px; cursor: se-resize; }
+.transform-handle.n { top: -4px; left: 50%; margin-left: -4px; cursor: n-resize; }
+.transform-handle.s { bottom: -4px; left: 50%; margin-left: -4px; cursor: s-resize; }
+.transform-handle.w { top: 50%; left: -4px; margin-top: -4px; cursor: w-resize; }
+.transform-handle.e { top: 50%; right: -4px; margin-top: -4px; cursor: e-resize; }
+
+/* Reference lines */
+.reference-line {
+  position: absolute;
+  background: #8b5cf6;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.reference-line.horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.reference-line.vertical {
+  width: 1px;
+  height: 100%;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Rich text editor styles */
+.ProseMirror {
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ProseMirror p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ProseMirror h1 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.ProseMirror h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  line-height: 1.3;
+}
+
+.ProseMirror strong {
+  font-weight: 600;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  padding-left: 16px;
+  margin: 8px 0;
+}
+
+.ProseMirror li {
+  margin: 4px 0;
+}
+
+.ProseMirror a {
+  color: #0f766e;
+  text-decoration: underline;
+}
+
+/* Animation classes */
+.animate-node-creation {
+  animation: nodeCreation 0.3s ease-out;
+}
+
+@keyframes nodeCreation {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* AI Dock custom styles */
+.ai-capsule-input {
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.ai-example-capsule {
+  background: #fefdfb;  /* 乳白色带一丝黄色调 */
+  border: 1px solid #f9f7f4;
+}
+
+.ai-example-capsule:hover {
+  background: #fdfbf7;
+  border-color: #f5f1ec;
+}
+
+/* Bounce-in animation with elastic effect */
+.animate-bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(20px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05) translateY(-5px);
+  }
+  70% {
+    transform: scale(0.95) translateY(2px);
+  }
+  85% {
+    transform: scale(1.02) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
