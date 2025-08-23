@@ -68,6 +68,7 @@ export interface AIContentCard extends BaseCard {
   bodyMarkdown: string; // 原始 markdown
   cover?: string;
   tags?: string[];
+  researchOngoing?: boolean; // 标识是否正在进行 Deep Research
 }
 
 // 图片卡片

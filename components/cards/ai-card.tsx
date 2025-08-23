@@ -36,7 +36,21 @@ export function AICardComponent({ card, style }: AICardProps) {
         </div>
 
         {/* 内容区域（滚动、只读） */}
-        <div className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 relative">
+          {/* Research ongoing 图层 */}
+          {(card as any).researchOngoing && (
+            <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/40 to-white/60 backdrop-blur-md z-10 flex items-center justify-center rounded">
+              {/* 添加一个微妙的边框效果 */}
+              <div className="absolute inset-0 border-2 border-white/30 rounded pointer-events-none"></div>
+              
+              <div className="text-center relative z-10">
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-3 shadow-lg"></div>
+                <div className="text-lg font-medium text-gray-700 drop-shadow-sm font-semibold">Research ongoing...</div>
+                <div className="text-sm text-gray-500 mt-1 drop-shadow-sm">Please wait while we gather information</div>
+              </div>
+            </div>
+          )}
+          
           <div
             className="w-full h-full transition-colors p-2 -m-2 rounded overflow-y-auto"
             data-scroll-container="true"
